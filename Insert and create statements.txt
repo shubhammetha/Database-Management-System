@@ -1,0 +1,282 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
+USE `mydb` ;
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Student`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Student` (
+  `idStudent` INT NOT NULL AUTO_INCREMENT,
+  `Student_fname` VARCHAR(45) NOT NULL,
+  `Student_lname` VARCHAR(45) NOT NULL,
+  `birth_date` DATE NOT NULL,
+  `Gender` VARCHAR(1) NOT NULL,
+  `Student_phone` VARCHAR(10) NOT NULL,
+  `Student_email` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idStudent`),
+  UNIQUE INDEX `idStudent_UNIQUE` (`idStudent` ASC) VISIBLE,
+  UNIQUE INDEX `Student_phone_UNIQUE` (`Student_phone` ASC) VISIBLE,
+  UNIQUE INDEX `Student_email_UNIQUE` (`Student_email` ASC) VISIBLE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Course_offered`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Course_offered` (
+  `idCourses_offered` INT NOT NULL AUTO_INCREMENT,
+  `Courses_offered_name` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idCourses_offered`),
+  UNIQUE INDEX `Courses_offered_name_UNIQUE` (`Courses_offered_name` ASC) VISIBLE,
+  UNIQUE INDEX `idCourses Offered_UNIQUE` (`idCourses_offered` ASC) VISIBLE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Course_schedule`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Course_schedule` (
+  `idCourse_schedule` INT NOT NULL,
+  `Courses Offered_idCourses_offered` INT NOT NULL,
+  `Week_days` VARCHAR(20) NOT NULL,
+  `Timing` TIME NOT NULL,
+  PRIMARY KEY (`idCourse_schedule`),
+  INDEX `fk_Course Schedule_Courses Offered1_idx` (`Courses Offered_idCourses_offered` ASC) VISIBLE,
+  CONSTRAINT `fk_Course Schedule_Courses Offered1`
+    FOREIGN KEY (`Courses Offered_idCourses_offered`)
+    REFERENCES `mydb`.`Course_offered` (`idCourses_offered`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Course_schedule_has_student`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Course_schedule_has_student` (
+  `Course Schedule_idCourse_schedule` INT NOT NULL,
+  `Student_idStudent` INT NOT NULL,
+  PRIMARY KEY (`Course Schedule_idCourse_schedule`, `Student_idStudent`),
+  INDEX `fk_Course Schedule_has_Student_Student1_idx` (`Student_idStudent` ASC) VISIBLE,
+  INDEX `fk_Course Schedule_has_Student_Course Schedule1_idx` (`Course Schedule_idCourse_schedule` ASC) VISIBLE,
+  CONSTRAINT `fk_Course Schedule_has_Student_Course Schedule1`
+    FOREIGN KEY (`Course Schedule_idCourse_schedule`)
+    REFERENCES `mydb`.`Course_schedule` (`idCourse_schedule`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Course Schedule_has_Student_Student1`
+    FOREIGN KEY (`Student_idStudent`)
+    REFERENCES `mydb`.`Student` (`idStudent`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Staff`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Staff` (
+  `idStaff` INT NOT NULL AUTO_INCREMENT,
+  `Staff_fname` VARCHAR(45) NOT NULL,
+  `Staff_lname` VARCHAR(45) NOT NULL,
+  `Birth_date` DATE NOT NULL,
+  `Gender` VARCHAR(1) NOT NULL,
+  `Job_title` VARCHAR(20) NOT NULL,
+  `Phone_number` VARCHAR(10) NOT NULL,
+  `Email_id` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idStaff`),
+  UNIQUE INDEX `idStaff_UNIQUE` (`idStaff` ASC) VISIBLE,
+  UNIQUE INDEX `Phone_number_UNIQUE` (`Phone_number` ASC) VISIBLE,
+  UNIQUE INDEX `Email_id_UNIQUE` (`Email_id` ASC) VISIBLE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Course_offered_has_staff`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Course_offered_has_staff` (
+  `Courses Offered_idCourses_offered` INT NOT NULL,
+  `Staff_idStaff` INT NOT NULL,
+  PRIMARY KEY (`Courses Offered_idCourses_offered`, `Staff_idStaff`),
+  INDEX `fk_Courses Offered_has_Staff_Staff1_idx` (`Staff_idStaff` ASC) VISIBLE,
+  INDEX `fk_Courses Offered_has_Staff_Courses Offered1_idx` (`Courses Offered_idCourses_offered` ASC) VISIBLE,
+  CONSTRAINT `fk_Courses Offered_has_Staff_Courses Offered1`
+    FOREIGN KEY (`Courses Offered_idCourses_offered`)
+    REFERENCES `mydb`.`Course_offered` (`idCourses_offered`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Courses Offered_has_Staff_Staff1`
+    FOREIGN KEY (`Staff_idStaff`)
+    REFERENCES `mydb`.`Staff` (`idStaff`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Area_of_research`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Area_of_research` (
+  `idArea_of_research` INT NOT NULL AUTO_INCREMENT,
+  `Area_of_research_name` VARCHAR(45) NULL,
+  `Area_of_research_Description` VARCHAR(45) NULL,
+  PRIMARY KEY (`idArea_of_research`),
+  UNIQUE INDEX `idArea of Research_UNIQUE` (`idArea_of_research` ASC) VISIBLE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Research_projects`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Research_projects` (
+  `Project_ID` INT NOT NULL AUTO_INCREMENT,
+  `Project_name` VARCHAR(200) NOT NULL,
+  `Project_description` VARCHAR(500) NOT NULL,
+  `Area of Research_idArea_of_research` INT NULL,
+  PRIMARY KEY (`Project_ID`),
+  INDEX `fk_Research Projects_Area of Research1_idx` (`Area of Research_idArea_of_research` ASC) VISIBLE,
+  CONSTRAINT `fk_Research Projects_Area of Research1`
+    FOREIGN KEY (`Area of Research_idArea_of_research`)
+    REFERENCES `mydb`.`Area_of_research` (`idArea_of_research`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Staff_research_interest`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Staff_research_interest` (
+  `Area of Research_idArea_of_research` INT NOT NULL,
+  `Staff_idStaff` INT NOT NULL,
+  PRIMARY KEY (`Area of Research_idArea_of_research`, `Staff_idStaff`),
+  INDEX `fk_Staff Research Interest_Staff1_idx` (`Staff_idStaff` ASC) VISIBLE,
+  CONSTRAINT `fk_Staff Research Interest_Area of Research1`
+    FOREIGN KEY (`Area of Research_idArea_of_research`)
+    REFERENCES `mydb`.`Area_of_research` (`idArea_of_research`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Staff Research Interest_Staff1`
+    FOREIGN KEY (`Staff_idStaff`)
+    REFERENCES `mydb`.`Staff` (`idStaff`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Staff_has_Research_projects`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Staff_has_Research_projects` (
+  `Staff_idStaff` INT NOT NULL,
+  `Research_projects_Project_ID` INT NOT NULL,
+  `Start_date` DATE NULL,
+  `End_date` DATE NULL,
+  PRIMARY KEY (`Staff_idStaff`, `Research_projects_Project_ID`),
+  INDEX `fk_Staff_has_Research_projects_Research_projects1_idx` (`Research_projects_Project_ID` ASC) VISIBLE,
+  INDEX `fk_Staff_has_Research_projects_Staff1_idx` (`Staff_idStaff` ASC) VISIBLE,
+  CONSTRAINT `fk_Staff_has_Research_projects_Staff1`
+    FOREIGN KEY (`Staff_idStaff`)
+    REFERENCES `mydb`.`Staff` (`idStaff`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Staff_has_Research_projects_Research_projects1`
+    FOREIGN KEY (`Research_projects_Project_ID`)
+    REFERENCES `mydb`.`Research_projects` (`Project_ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+-- -----------------------------------------------------
+-- Data for table `mydb`.`Student`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `mydb`;
+INSERT INTO `mydb`.`Student` (`idStudent`, `Student_fname`, `Student_lname`, `birth_date`, `Gender`, `Student_phone`, `Student_email`) VALUES (001, 'Ross', 'Geller', '1994/04/08', 'M', '1234567890', 'ross.gellar@neu.edu');
+INSERT INTO `mydb`.`Student` (`idStudent`, `Student_fname`, `Student_lname`, `birth_date`, `Gender`, `Student_phone`, `Student_email`) VALUES (002, 'Joey', 'Tribbiani', '1991/08/12', 'M', '9876543210', 'joey.tribbiani@neu.edu');
+INSERT INTO `mydb`.`Student` (`idStudent`, `Student_fname`, `Student_lname`, `birth_date`, `Gender`, `Student_phone`, `Student_email`) VALUES (003, 'Monica', 'Geller', '1996/12/02', 'F', '1357908642', 'monica.geller@neu.edu');
+INSERT INTO `mydb`.`Student` (`idStudent`, `Student_fname`, `Student_lname`, `birth_date`, `Gender`, `Student_phone`, `Student_email`) VALUES (004, 'Rachel', 'Green', '1990/03/11', 'F', '2468097531', 'rachel.green@neu.edu');
+INSERT INTO `mydb`.`Student` (`idStudent`, `Student_fname`, `Student_lname`, `birth_date`, `Gender`, `Student_phone`, `Student_email`) VALUES (005, 'Pheobe', 'Buffay', '1987/06/06', 'F', '1234509876', 'pheobe.buffay@neu.edu');
+INSERT INTO `mydb`.`Student` (`idStudent`, `Student_fname`, `Student_lname`, `birth_date`, `Gender`, `Student_phone`, `Student_email`) VALUES (006, 'Chandler', 'Bing', '1985/01/05', 'M', '0192837465', 'chandler.bing@neu.edu');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `mydb`.`Course_offered`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `mydb`;
+INSERT INTO `mydb`.`Course_offered` (`idCourses_offered`, `Courses_offered_name`) VALUES (01, 'DMDD');
+INSERT INTO `mydb`.`Course_offered` (`idCourses_offered`, `Courses_offered_name`) VALUES (02, 'AED');
+INSERT INTO `mydb`.`Course_offered` (`idCourses_offered`, `Courses_offered_name`) VALUES (03, 'Web Tools');
+INSERT INTO `mydb`.`Course_offered` (`idCourses_offered`, `Courses_offered_name`) VALUES (04, 'Data Science');
+INSERT INTO `mydb`.`Course_offered` (`idCourses_offered`, `Courses_offered_name`) VALUES (05, 'Web Design');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `mydb`.`Course_schedule`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `mydb`;
+INSERT INTO `mydb`.`Course_schedule` (`idCourse_schedule`, `Courses Offered_idCourses_offered`, `Week_days`, `Timing`) VALUES (5100, 2, 'sunday', '09:00:00');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `mydb`.`Staff`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `mydb`;
+INSERT INTO `mydb`.`Staff` (`idStaff`, `Staff_fname`, `Staff_lname`, `Birth_date`, `Gender`, `Job_title`, `Phone_number`, `Email_id`) VALUES (111, 'John', 'Smith', '1970/04/02', 'M', 'Associate Professor', '1122334455', 'john.smith@neu.edu');
+INSERT INTO `mydb`.`Staff` (`idStaff`, `Staff_fname`, `Staff_lname`, `Birth_date`, `Gender`, `Job_title`, `Phone_number`, `Email_id`) VALUES (222, 'Haley', 'Jones', '1980/08/16', 'F', 'Associate Professor', '1133557799', 'haley.jones@neu.edu');
+INSERT INTO `mydb`.`Staff` (`idStaff`, `Staff_fname`, `Staff_lname`, `Birth_date`, `Gender`, `Job_title`, `Phone_number`, `Email_id`) VALUES (333, 'Kiara', 'Walker', '1975/09/13', 'F', 'Assistant Professor', '2244668800', 'kiara.walker@neu.edu');
+INSERT INTO `mydb`.`Staff` (`idStaff`, `Staff_fname`, `Staff_lname`, `Birth_date`, `Gender`, `Job_title`, `Phone_number`, `Email_id`) VALUES (444, 'Alan', 'Walker', '1972/08/08', 'M', 'Assistant Professor', '1112223334', 'alan.walker@neu.edu');
+INSERT INTO `mydb`.`Staff` (`idStaff`, `Staff_fname`, `Staff_lname`, `Birth_date`, `Gender`, `Job_title`, `Phone_number`, `Email_id`) VALUES (555, 'Emma', 'Watson', '1982/07/28', 'F', 'Program Director', '1029384756', 'emma.watson@neu.edu');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `mydb`.`Area_of_research`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `mydb`;
+INSERT INTO `mydb`.`Area_of_research` (`idArea_of_research`, `Area_of_research_name`, `Area_of_research_Description`) VALUES (1, 'Database Design', 'ER Diagrams');
+INSERT INTO `mydb`.`Area_of_research` (`idArea_of_research`, `Area_of_research_name`, `Area_of_research_Description`) VALUES (2, 'Java programming', 'Comments on source code ');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `mydb`.`Research_projects`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `mydb`;
+INSERT INTO `mydb`.`Research_projects` (`Project_ID`, `Project_name`, `Project_description`, `Area of Research_idArea_of_research`) VALUES (1, 'Conventional and convenient in entity-relationship modeling', 'This article attempts to standardize the use of many terms used in the software reuse literature. Three terms of particular interest -- taxonomy, software reuse, and domain analysis -- and some problems with their usage are discussed.', NULL);
+INSERT INTO `mydb`.`Research_projects` (`Project_ID`, `Project_name`, `Project_description`, `Area of Research_idArea_of_research`) VALUES (2, 'Generate Comment from Source Code', 'Comments improve program comprehension and software maintainability. This paper summarizes the comment generation work', NULL);
+INSERT INTO `mydb`.`Research_projects` (`Project_ID`, `Project_name`, `Project_description`, `Area of Research_idArea_of_research`) VALUES (3, 'Autoencoders', 'This approach is based on the observation that random initialization is a bad idea and that pre-training each layer with an unsupervised learning algorithm can allow for better initial weights', NULL);
+INSERT INTO `mydb`.`Research_projects` (`Project_ID`, `Project_name`, `Project_description`, `Area of Research_idArea_of_research`) VALUES (4, 'Basic Entity-Relationship Modelling for GIS Database', 'The project uses a simple example to illustrate the identification of an Entity Relationship Diagram components to model a GIS database.', NULL);
+
+COMMIT;
+
